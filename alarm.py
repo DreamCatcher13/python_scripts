@@ -1,7 +1,7 @@
 #from playsound import playsound # pip install playsound==1.2.2
 import time
 import os
-os.system("") # for ansi escape to work on Windows but doesn't :(
+os.system("") # for ansi escape to work on Windows but doesn't on win7 :(
 
 # escape chars will manipulate the terminal
 CLEAR = "\033[2J"
