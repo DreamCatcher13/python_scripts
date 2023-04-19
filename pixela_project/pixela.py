@@ -13,9 +13,12 @@ def resource_path(relative_path):
 
     return os.path.join(base_path, relative_path)
 
-### PIXELA ENDPOINTS ###
-pixela_user = "https://pixe.la/v1/users"
-pixela_cred = ""
+### GLOBAL VARIABLES ###
+pixela_end = "https://pixe.la/v1/users"
+token = ""
+username = ""
+today = datetime.now().strftime("%Y%m%d")
+#font =  !!!
 
 #with open("cred.txt", "r") as f:
 #    content = [l.rstrip() for l in f.readlines()]
@@ -44,7 +47,7 @@ def user_create():
 			"agreeTermsOfService": "yes",
 			"notMinor": "yes"
 		}
-		endpoint = pixela_user
+		endpoint = pixela_end
 		responce = requests.post(url=endpoint, json=user_params)
 		msg = responce.json()
 		messagebox.showinfo(title="Responce", message=msg['message'])
@@ -58,17 +61,18 @@ def user_create():
 	
 def select_file():
 	""" select a file with credentials """
-	global pixela_cred
+	global token, username
 	messagebox.showinfo(title="Responce", 
 						message="Select *.txt file with your credentials in this format:\ntoken\nusername")
 	filetypes = (('text files', '*.txt'), ('All files', '*.*'))
-	filename = filedialog.askopenfilename(title='Select your creds', filetypes=filetypes)
-	pixela_cred = filename
+	pixela_cred = filedialog.askopenfilename(title='Select your creds', filetypes=filetypes)
+	with open(pixela_cred, "r") as f:
+		content = [l.rstrip() for l in f.readlines()]
+		token, username = content[0], content[1]
 	
 def graph_create():
 	""" creating a graph for given user """
 	select_file()
-	global pixela_cred
 	top = Toplevel()
 	top.config(padx=5, pady=5)
 	top.grab_set()
@@ -101,10 +105,7 @@ def graph_create():
 	color.grid(column=2, row=5)
 	
 	def create():
-		with open(pixela_cred, "r") as f:
-			content = [l.rstrip() for l in f.readlines()]
-			token, username = content[0], content[1]
-		
+	
 		headers = {
 			"X-USER-TOKEN": token
 		}
@@ -117,7 +118,7 @@ def graph_create():
 			"color": color.get()
 		}
 		
-		endpoint = f"{pixela_user}/{username}/graphs"
+		endpoint = f"{pixela_end}/{username}/graphs"
 		responce = requests.post(url=endpoint, json=user_params, headers=headers)
 		msg = responce.json()
 		messagebox.showinfo(title="Responce", message=msg['message'])
@@ -131,18 +132,46 @@ def graph_create():
 # TODO 1 change font
 # TODO 2 add some validation	
 	
-#def post_a_pixel():
-#	""" post a pixel """
-#	username = user.get()
-#	graph_id = graph.get()
-#   GRAPH_PARAMS['quantity'] = quantity.get()
-#    if len(username) == 0 or len(graph_id) == 0 or len( GRAPH_PARAMS['quantity']) == 0:
-#        messagebox.showinfo(title="Error", message="You should fill all the fields")
-#    else:
-#        endpoint = f"{PIXELA}/{username}/graphs/{graph_id}"
-#        responce = requests.post(url=endpoint, json=GRAPH_PARAMS, headers=HEADERS)
-#        msg = responce.json()
-#        messagebox.showinfo(title="Responce", message=msg['message'])
+def post_a_pixel():
+	""" post a pixel """
+	select_file()
+	top = Toplevel()
+	top.config(padx=5, pady=5)
+	top.grab_set()
+	
+	g_id = Label(top, text="Enter graph ID", font=("Agency FB", 14))
+	q = Label(top, text="Enter quantity", font=("Agency FB", 14))
+	d = Label(top, text="Enter date", font=("Agency FB", 14))
+	g_id.grid(column=1, row=1)
+	q.grid(column=1, row=2)
+	d.grid(column=1, row=3)
+	
+	id = Entry(top, width=20)
+	quantity = Entry(top, width=20)
+	date = Entry(top, width=20)
+	date.insert(0, today)
+	id.grid(column=2, row=1)
+	quantity.grid(column=2, row=2)
+	date.grid(column=2, row=3)
+	
+	def add():
+		
+		headers = {
+			"X-USER-TOKEN": token
+		}
+		
+		user_params = {
+			"date": date.get(),
+			"quantity": quantity.get(),
+		}
+		
+		endpoint = f"{pixela_end}/{username}/graphs/{id.get()}"
+		responce = requests.post(url=endpoint, json=user_params, headers=headers)
+		msg = responce.json()
+		messagebox.showinfo(title="Responce", message=msg['message'])
+		
+	add_button = Button(top, text="Add a pixel", width=15, command=add)
+	add_button.grid(column=1, row=4, columnspan=2, pady=5)
 
 ### MAIN WINDOW ###
 window = Tk()
@@ -154,7 +183,7 @@ parrot = PhotoImage(file=resource_path("pixela.png"))
 canvas_img = canvas.create_image(240, 135, image=parrot)
 canvas.grid(column=1, row=1, columnspan=3)
 
-add_pixel = Button(text="Add a pixel", width=15)
+add_pixel = Button(text="Add a pixel", width=15, command=post_a_pixel)
 update_pixel = Button(text="Update a pixel", width=15)
 add_user = Button(text="Add a user", width=15, command=user_create)
 add_graph = Button(text="Add a graph", width=15, command=graph_create)
