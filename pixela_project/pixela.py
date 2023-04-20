@@ -1,8 +1,7 @@
 import requests, os, sys
 from datetime import datetime
 from tkinter import *
-from tkinter import filedialog
-from tkinter import messagebox
+from tkinter import filedialog, messagebox, font
 
 ### for pyinstaller ###
 def resource_path(relative_path):
@@ -14,11 +13,14 @@ def resource_path(relative_path):
     return os.path.join(base_path, relative_path)
 
 ### GLOBAL VARIABLES ###
-pixela_end = "https://pixe.la/v1/users"
-token = ""
-username = ""
-today = datetime.now().strftime("%Y%m%d")
-#font =  !!!
+PIXELA_END = "https://pixe.la/v1/users"
+TOKEN = ""
+USERNAME = ""
+TODAY = datetime.now().strftime("%Y%m%d")
+FONT =  ("Times New Roman",12)
+B_FONT = ("Helvetica 12 bold")
+BG="#b8f78d"
+BG2 = "#c5ccfa"
 
 #with open("cred.txt", "r") as f:
 #    content = [l.rstrip() for l in f.readlines()]
@@ -27,27 +29,27 @@ today = datetime.now().strftime("%Y%m%d")
 def user_create():
 	""" create a user """
 	top = Toplevel()
-	top.config(padx=5, pady=5)
+	top.config(padx=5, pady=5, bg=BG2)
 	top.grab_set()
 	
-	user_label = Label(top, text="Enter your username", font=("Agency FB", 14))
-	token_label = Label(top, text="Enter your secret token", font=("Agency FB", 14))
-	user_label.grid(column=1, row=1)
-	token_label.grid(column=1, row=2)
+	user_label = Label(top, bg=BG2, text="Enter your username",  font=FONT)
+	token_label = Label(top, bg=BG2, text="Enter your secret token", font=FONT)
+	user_label.grid(column=1, row=1, padx=2)
+	token_label.grid(column=1, row=2, padx=2)
 
 	user = Entry(top, width=20)
-	token = Entry(top, width=20)
+	tkn = Entry(top, width=20)
 	user.grid(column=2, row=1)
-	token.grid(column=2, row=2)
+	tkn.grid(column=2, row=2)
 	
 	def create():
 		user_params = {
-			"token": token.get(),
+			"token": tkn.get(),
 			"username": user.get(),
 			"agreeTermsOfService": "yes",
 			"notMinor": "yes"
 		}
-		endpoint = pixela_end
+		endpoint = PIXELA_END
 		responce = requests.post(url=endpoint, json=user_params)
 		msg = responce.json()
 		messagebox.showinfo(title="Responce", message=msg['message'])
@@ -61,29 +63,29 @@ def user_create():
 	
 def select_file():
 	""" select a file with credentials """
-	global token, username
+	global TOKEN, USERNAME
 	messagebox.showinfo(title="Responce", 
 						message="Select *.txt file with your credentials in this format:\ntoken\nusername")
 	filetypes = (('text files', '*.txt'), ('All files', '*.*'))
 	pixela_cred = filedialog.askopenfilename(title='Select your creds', filetypes=filetypes)
 	with open(pixela_cred, "r") as f:
 		content = [l.rstrip() for l in f.readlines()]
-		token, username = content[0], content[1]
+		TOKEN, USERNAME = content[0], content[1]
 	
 def graph_create():
 	""" creating a graph for given user """
 	select_file()
 	top = Toplevel()
-	top.config(padx=5, pady=5)
+	top.config(padx=5, pady=5, bg=BG2)
 	top.grab_set()
 	
-	g_id = Label(top, text="Enter graph ID", font=("Agency FB", 14))
-	g_name = Label(top, text="Enter graph name", font=("Agency FB", 14))
-	g_unit = Label(top, text="Enter graph units", font=("Agency FB", 14))
-	g_type = Label(top, text="Enter type of quantity: int OR float", font=("Agency FB", 14)) 
-	g_color = Label(top, text="Enter graph color", font=("Agency FB", 14))
+	g_id = Label(top, text="Enter graph ID", bg=BG2, font=FONT)
+	g_name = Label(top, text="Enter graph name", bg=BG2, font=FONT)
+	g_unit = Label(top, text="Enter graph units", bg=BG2, font=FONT)
+	g_type = Label(top, text="Enter type of quantity:\nint OR float", bg=BG2, font=FONT) 
+	g_color = Label(top, text="Enter graph color", bg=BG2, font=FONT)
 	colors = "shibafu (green), momiji (red),\n\t\tsora (blue), ichou (yellow),\n\t\tajisai (purple) and kuro (black)"
-	all_colors = Label(top, text="Supported colors: "+colors, font=("Agency FB", 14))
+	all_colors = Label(top, text="Supported colors: "+colors, bg=BG2, font=FONT)
 	g_id.grid(column=1, row=1)
 	g_name.grid(column=1, row=2)
 	g_unit.grid(column=1, row=3)
@@ -107,7 +109,7 @@ def graph_create():
 	def create():
 	
 		headers = {
-			"X-USER-TOKEN": token
+			"X-USER-TOKEN": TOKEN
 		}
 		
 		user_params = {
@@ -118,7 +120,7 @@ def graph_create():
 			"color": color.get()
 		}
 		
-		endpoint = f"{pixela_end}/{username}/graphs"
+		endpoint = f"{PIXELA_END}/{USERNAME}/graphs"
 		responce = requests.post(url=endpoint, json=user_params, headers=headers)
 		msg = responce.json()
 		messagebox.showinfo(title="Responce", message=msg['message'])
@@ -129,19 +131,18 @@ def graph_create():
 	top.mainloop()	
 	
 
-# TODO 1 change font
 # TODO 2 add some validation	
 	
-def post_a_pixel():
+def post_update_pixel():
 	""" post a pixel """
 	select_file()
 	top = Toplevel()
-	top.config(padx=5, pady=5)
+	top.config(padx=5, pady=5, bg=BG2)
 	top.grab_set()
 	
-	g_id = Label(top, text="Enter graph ID", font=("Agency FB", 14))
-	q = Label(top, text="Enter quantity", font=("Agency FB", 14))
-	d = Label(top, text="Enter date", font=("Agency FB", 14))
+	g_id = Label(top, text="Enter graph ID", bg=BG2, font=FONT)
+	q = Label(top, text="Enter quantity", bg=BG2, font=FONT)
+	d = Label(top, text="Enter date", bg=BG2, font=FONT)
 	g_id.grid(column=1, row=1)
 	q.grid(column=1, row=2)
 	d.grid(column=1, row=3)
@@ -149,7 +150,7 @@ def post_a_pixel():
 	id = Entry(top, width=20)
 	quantity = Entry(top, width=20)
 	date = Entry(top, width=20)
-	date.insert(0, today)
+	date.insert(0, TODAY)
 	id.grid(column=2, row=1)
 	quantity.grid(column=2, row=2)
 	date.grid(column=2, row=3)
@@ -157,7 +158,7 @@ def post_a_pixel():
 	def add():
 		
 		headers = {
-			"X-USER-TOKEN": token
+			"X-USER-TOKEN": TOKEN
 		}
 		
 		user_params = {
@@ -165,32 +166,50 @@ def post_a_pixel():
 			"quantity": quantity.get(),
 		}
 		
-		endpoint = f"{pixela_end}/{username}/graphs/{id.get()}"
+		endpoint = f"{PIXELA_END}/{USERNAME}/graphs/{id.get()}"
 		responce = requests.post(url=endpoint, json=user_params, headers=headers)
 		msg = responce.json()
 		messagebox.showinfo(title="Responce", message=msg['message'])
 		
+	def update():
+		
+		headers = {
+			"X-USER-TOKEN": TOKEN
+		}
+		
+		user_params = {
+			"quantity": quantity.get(),
+		}
+		
+		endpoint = f"{PIXELA_END}/{USERNAME}/graphs/{id.get()}/{date.get()}"
+		responce = requests.put(url=endpoint, json=user_params, headers=headers)
+		msg = responce.json()
+		messagebox.showinfo(title="Responce", message=msg['message'])
+		
 	add_button = Button(top, text="Add a pixel", width=15, command=add)
-	add_button.grid(column=1, row=4, columnspan=2, pady=5)
-
+	update_button = Button(top, text="Update a pixel", width=15, command=update)
+	add_button.grid(column=1, row=4, pady=5)
+	update_button.grid(column=2, row=4, pady=5)
+	
+	
+	top.mainloop()
+	
 ### MAIN WINDOW ###
 window = Tk()
 window.title("Pixela habit tracker")
-window.config(padx=15, pady=15)
+window.config(padx=15, pady=15, bg=BG)
 
 canvas = Canvas(width=480, height=270, highlightthickness=0)
 parrot = PhotoImage(file=resource_path("pixela.png"))
 canvas_img = canvas.create_image(240, 135, image=parrot)
 canvas.grid(column=1, row=1, columnspan=3)
 
-add_pixel = Button(text="Add a pixel", width=15, command=post_a_pixel)
-update_pixel = Button(text="Update a pixel", width=15)
-add_user = Button(text="Add a user", width=15, command=user_create)
-add_graph = Button(text="Add a graph", width=15, command=graph_create)
-add_pixel.grid(column=2, row=2, pady=5)
-update_pixel.grid(column=2, row=3, pady=5)
-add_user.grid(column=1, row=4, pady=5)
-add_graph.grid(column=3, row=4, pady=5)
+pixel_button = Button(text="Add or update a pixel", relief="ridge", borderwidth=3, bg="#fff242", width=20, font=B_FONT, command=post_update_pixel)
+add_user = Button(text="Add a user", relief="ridge", borderwidth=3, bg="#fff242", width=15, font=B_FONT, command=user_create)
+add_graph = Button(text="Add a graph", relief="ridge", borderwidth=3,  bg="#fff242", width=15, font=B_FONT, command=graph_create)
+pixel_button.grid(column=2, row=2, pady=5)
+add_user.grid(column=1, row=3, pady=5)
+add_graph.grid(column=3, row=3, pady=5)
 
 
 window.mainloop()
