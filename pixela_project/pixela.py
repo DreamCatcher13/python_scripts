@@ -64,8 +64,7 @@ def user_create():
 def select_file():
 	""" select a file with credentials """
 	global TOKEN, USERNAME
-	messagebox.showinfo(title="Responce", 
-						message="Select *.txt file with your credentials in this format:\ntoken\nusername")
+	messagebox.showinfo(title="Responce", message="Select *.txt file with your credentials in this format:\ntoken\nusername")
 	filetypes = (('text files', '*.txt'), ('All files', '*.*'))
 	pixela_cred = filedialog.askopenfilename(title='Select your creds', filetypes=filetypes)
 	with open(pixela_cred, "r") as f:
@@ -107,7 +106,6 @@ def graph_create():
 	color.grid(column=2, row=5)
 	
 	def create():
-	
 		headers = {
 			"X-USER-TOKEN": TOKEN
 		}
@@ -155,7 +153,6 @@ def post_update_pixel():
 	date.grid(column=2, row=3)
 	
 	def add():
-		
 		headers = {
 			"X-USER-TOKEN": TOKEN
 		}
@@ -172,7 +169,6 @@ def post_update_pixel():
 			messagebox.showinfo(title="Responce", message=msg['message'])
 		
 	def update():
-		
 		headers = {
 			"X-USER-TOKEN": TOKEN
 		}
