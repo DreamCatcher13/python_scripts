@@ -22,10 +22,6 @@ B_FONT = ("Helvetica 12 bold")
 BG="#b8f78d"
 BG2 = "#c5ccfa"
 
-#with open("cred.txt", "r") as f:
-#    content = [l.rstrip() for l in f.readlines()]
-#    TOKEN, USERNAME = content[0], content[1]
-
 def user_create():
 	""" create a user """
 	top = Toplevel()
@@ -49,12 +45,16 @@ def user_create():
 			"agreeTermsOfService": "yes",
 			"notMinor": "yes"
 		}
-		endpoint = PIXELA_END
-		responce = requests.post(url=endpoint, json=user_params)
-		msg = responce.json()
-		messagebox.showinfo(title="Responce", message=msg['message'])
-		with open(f"{user_params['username']}_cred.txt", "w") as f:
-			f.write(f"{user_params['token']}\n{user_params['username']}")	
+		
+		if len(user_params['token']) == 0 or len(user_params['username']) == 0:
+			messagebox.showinfo(title="Error", message="You should fill all the fields")
+		else:
+			endpoint = PIXELA_END
+			responce = requests.post(url=endpoint, json=user_params)
+			msg = responce.json()
+			messagebox.showinfo(title="Responce", message=msg['message'])
+			with open(f"{user_params['username']}_cred.txt", "w") as f:
+				f.write(f"{user_params['token']}\n{user_params['username']}")	
 	
 	create_b = Button(top,text="Add a user", width=15, command=create)
 	create_b.grid(column=1, row=3, columnspan=2, pady=5)
@@ -111,7 +111,6 @@ def graph_create():
 		headers = {
 			"X-USER-TOKEN": TOKEN
 		}
-		
 		user_params = {
 			"id": id.get(),
 			"name": name.get(),
@@ -119,19 +118,19 @@ def graph_create():
 			"type": type.get(),
 			"color": color.get()
 		}
-		
-		endpoint = f"{PIXELA_END}/{USERNAME}/graphs"
-		responce = requests.post(url=endpoint, json=user_params, headers=headers)
-		msg = responce.json()
-		messagebox.showinfo(title="Responce", message=msg['message'])
+		# is where any way to make it better?
+		if len(user_params['id']) == 0 or len(user_params['name']) == 0 or len(user_params['unit']) == 0 or len(user_params['type']) == 0 or len(user_params['color']) == 0:
+			messagebox.showinfo(title="Error", message="You should fill all the fields")
+		else:
+			endpoint = f"{PIXELA_END}/{USERNAME}/graphs"
+			responce = requests.post(url=endpoint, json=user_params, headers=headers)
+			msg = responce.json()
+			messagebox.showinfo(title="Responce", message=msg['message'])
 		
 	create_b = Button(top, text="Add a graph", width=15, command=create)
 	create_b.grid(column=1, row=7, columnspan=2, pady=5)
 		
 	top.mainloop()	
-	
-
-# TODO 2 add some validation	
 	
 def post_update_pixel():
 	""" post a pixel """
@@ -160,37 +159,39 @@ def post_update_pixel():
 		headers = {
 			"X-USER-TOKEN": TOKEN
 		}
-		
 		user_params = {
 			"date": date.get(),
 			"quantity": quantity.get(),
 		}
-		
-		endpoint = f"{PIXELA_END}/{USERNAME}/graphs/{id.get()}"
-		responce = requests.post(url=endpoint, json=user_params, headers=headers)
-		msg = responce.json()
-		messagebox.showinfo(title="Responce", message=msg['message'])
+		if len(user_params['date']) == 0 or len(user_params['quantity']) == 0 or len(id.get()) == 0:
+			messagebox.showinfo(title="Error", message="You should fill all the fields")
+		else:
+			endpoint = f"{PIXELA_END}/{USERNAME}/graphs/{id.get()}"
+			responce = requests.post(url=endpoint, json=user_params, headers=headers)
+			msg = responce.json()
+			messagebox.showinfo(title="Responce", message=msg['message'])
 		
 	def update():
 		
 		headers = {
 			"X-USER-TOKEN": TOKEN
 		}
-		
 		user_params = {
 			"quantity": quantity.get(),
 		}
 		
-		endpoint = f"{PIXELA_END}/{USERNAME}/graphs/{id.get()}/{date.get()}"
-		responce = requests.put(url=endpoint, json=user_params, headers=headers)
-		msg = responce.json()
-		messagebox.showinfo(title="Responce", message=msg['message'])
+		if len(date.get()) == 0 or len(user_params['quantity']) == 0 or len(id.get()) == 0:
+			messagebox.showinfo(title="Error", message="You should fill all the fields")
+		else:
+			endpoint = f"{PIXELA_END}/{USERNAME}/graphs/{id.get()}/{date.get()}"
+			responce = requests.put(url=endpoint, json=user_params, headers=headers)
+			msg = responce.json()
+			messagebox.showinfo(title="Responce", message=msg['message'])
 		
 	add_button = Button(top, text="Add a pixel", width=15, command=add)
 	update_button = Button(top, text="Update a pixel", width=15, command=update)
 	add_button.grid(column=1, row=4, pady=5)
 	update_button.grid(column=2, row=4, pady=5)
-	
 	
 	top.mainloop()
 	
