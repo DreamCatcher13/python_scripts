@@ -30,8 +30,13 @@ def user_create():
 	
 	user_label = Label(top, bg=BG2, text="Enter your username",  font=FONT)
 	token_label = Label(top, bg=BG2, text="Enter your secret token", font=FONT)
+	message = Label(top, bg=BG2, text="""After pressing the button, the .txt file with
+your credentials will be created in the 
+current working directory. Please, use it 
+for creating graphs, adding / updating pixels""", font=FONT)
 	user_label.grid(column=1, row=1, padx=2)
 	token_label.grid(column=1, row=2, padx=2)
+	message.grid(column=1, row=4, columnspan=2)
 
 	user = Entry(top, width=20)
 	tkn = Entry(top, width=20)
