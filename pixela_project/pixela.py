@@ -64,7 +64,7 @@ def user_create():
 def select_file():
 	""" select a file with credentials """
 	global TOKEN, USERNAME
-	messagebox.showinfo(title="Responce", message="Select *.txt file with your credentials in this format:\ntoken\nusername")
+	messagebox.showinfo(title="Select file", message="Select *.txt file with your credentials in this format:\ntoken\nusername")
 	filetypes = (('text files', '*.txt'), ('All files', '*.*'))
 	pixela_cred = filedialog.askopenfilename(title='Select your creds', filetypes=filetypes)
 	with open(pixela_cred, "r") as f:
