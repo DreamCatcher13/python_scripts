@@ -8,16 +8,6 @@ parser.add_argument("file", help="Path to file with books")
 
 args = vars(parser.parse_args())
 
-def randomList(l):
-    """get 2 random books from a list"""
-    if len(l)%2 != 0:
-        l.append("Filler")
-    result = []
-    for i in range(2):
-        result.append(random.choice(l))
-        l.remove(result[i])
-    return result
-
 def convertToPairs (l):
     """convert a list with separated books into list of tuples (2 books in a tuple)"""
     if len(l)%2 != 0:
@@ -41,18 +31,9 @@ def nextRound(l, n):
 
 excel_df = pandas.read_excel('books.xlsx', sheet_name=f'2024')
 books = excel_df['Title'].tolist()
-print("Round 1\n")
-roundOne = []
+random.shuffle(books)
 
-# first run  -- we need to randomize the list..
-while len(books) != 0:
-    pair = randomList(books)
-    r = input(f"Select a book:\n 0 {pair[0]}\n 1 {pair[1]}\n")
-    roundOne.append(pair[int(r)])
-
-r = 1  # round number
-
-nextRound(roundOne, r)
+nextRound(books, 0)
 
 ## gui maybe: open file with books, 2 buttons..
 
