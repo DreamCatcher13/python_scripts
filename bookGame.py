@@ -1,7 +1,17 @@
 import random
+import pandas
+import argparse
+
+parser = argparse.ArgumentParser(description="Argument parser",
+                                 formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+parser.add_argument("file", help="Path to file with books")
+
+args = vars(parser.parse_args())
 
 def randomList(l):
     """get 2 random books from a list"""
+    if len(l)%2 != 0:
+        l.append("Filler")
     result = []
     for i in range(2):
         result.append(random.choice(l))
@@ -11,7 +21,7 @@ def randomList(l):
 def convertToPairs (l):
     """convert a list with separated books into list of tuples (2 books in a tuple)"""
     if len(l)%2 != 0:
-        l.append(" ")
+        l.append("Filler")
     return [(l[i], l[i+1]) for i in range(0,len(l),2)]
 
 def nextRound(l, n):
@@ -28,15 +38,13 @@ def nextRound(l, n):
             newL.append(pairs[i][int(r)]) 
         nextRound(newL, n)
 
-books = []
 
-with open("booklist.txt", "r", encoding="utf-8") as f:
-    for line in f.readlines():
-        books.append(line.strip())
-
+excel_df = pandas.read_excel('books.xlsx', sheet_name=f'2024')
+books = excel_df['Title'].tolist()
 print("Round 1\n")
 roundOne = []
 
+# first run  -- we need to randomize the list..
 while len(books) != 0:
     pair = randomList(books)
     r = input(f"Select a book:\n 0 {pair[0]}\n 1 {pair[1]}\n")
