@@ -4,7 +4,12 @@ import argparse
 
 parser = argparse.ArgumentParser(description="Argument parser",
                                  formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-parser.add_argument("file", help="Path to file with books")
+parser.add_argument("file", 
+                    help="Path to file with books",
+                    default='books.xlsx')
+parser.add_argument("scenario", 
+                    help="Possible scenarios are 'random-book' or 'book-game'", 
+                    default='random-book')
 
 args = vars(parser.parse_args())
 
