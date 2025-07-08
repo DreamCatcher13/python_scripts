@@ -1,5 +1,4 @@
 import random
-import pandas
 import argparse
 from helper import nextRound, shuffleBooks
 
