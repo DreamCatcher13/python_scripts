@@ -1,7 +1,7 @@
 import random
 import pandas
 import argparse
-from helper import nextRound
+from helper import nextRound, shuffleBooks
 
 parser = argparse.ArgumentParser(description="Argument parser",
                                  formatter_class=argparse.ArgumentDefaultsHelpFormatter)
@@ -12,15 +12,14 @@ parser.add_argument("--scenario",
 
 args = vars(parser.parse_args())
 
-if args['scenario'] == 'book-game':
-    data = pandas.read_excel(args['file'], sheet_name=f'read')
-    books = data['Title'].tolist()
-    random.shuffle(books)
+booksData = args['file']
+scenario = args['scenario']
+
+if scenario == 'book-game':
+    books = shuffleBooks(booksData, 'read')
     nextRound(books, 0)
-elif args['scenario'] == 'random-book':
-    data = pandas.read_excel('books.xlsx', sheet_name=f'un-read')
-    books = data['Title'].tolist()
-    random.shuffle(books)
+elif scenario == 'random-book':
+    books = shuffleBooks(booksData, 'un-read')
     print(f"Your next book to read: {random.choice(books)}")
 
 ## gui maybe: open file with books, 2 buttons..

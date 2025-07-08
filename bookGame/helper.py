@@ -1,3 +1,6 @@
+import random
+import pandas
+
 def convertToPairs (l):
     """convert a list with separated books into list of tuples (2 books in a tuple)"""
     if len(l)%2 != 0:
@@ -17,3 +20,10 @@ def nextRound(l, n):
             r = input(f"Select a book:\n 0 {pairs[i][0]}\n 1 {pairs[i][1]}\n")
             newL.append(pairs[i][int(r)]) 
         nextRound(newL, n)
+
+def shuffleBooks(booksFile, sheet):
+    """takes data and returns a list of books in random order"""    
+    data = pandas.read_excel(booksFile, sheet)
+    books = data['Title'].tolist()
+    random.shuffle(books)
+    return books
